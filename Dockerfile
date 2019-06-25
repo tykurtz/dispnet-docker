@@ -45,7 +45,7 @@ RUN sudo curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py   && \
     sudo python3 get-pip.py                                        && \
     wget https://lmb.informatik.uni-freiburg.de/resources/binaries/tensorflow-binaries/tensorflow-1.11.0-cp36-cp36m-linux_x86_64.whl && \
     sudo -H pip3 install ${HOME}/tensorflow-1.11.0-cp36-cp36m-linux_x86_64.whl && \
-    sudo -H pip3 install scikit-learn pillow scipy
+    sudo -H pip3 install scikit-learn pillow scipy imageio
 
 RUN git clone https://github.com/lmb-freiburg/lmbspecialops && \
     cd lmbspecialops                                        && \
