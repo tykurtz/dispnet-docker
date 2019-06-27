@@ -61,7 +61,7 @@ fun__print_usage () {
 GPU_IDX=0;
 CONTAINER="lmb-freiburg-netdef";
 NETWORK="";
-VERBOSITY=0;
+VERBOSITY=3;
 
 ## Verbosity-controlled "printf" wrapper for ERROR
 fun__error_printf () {
