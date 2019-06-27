@@ -124,3 +124,5 @@ ENV PATH="/home/netdef/netdef_slim/tools:$PATH"
 
 RUN sudo apt-get update && sudo apt-get install python3-yaml python3-catkin-pkg-modules python3-rospkg-modules -y \
   && sudo rm -rf /var/lib/apt/lists/*
+
+COPY src/dispnet-wrapper/dispnet_wrapper.py /home/netdef
