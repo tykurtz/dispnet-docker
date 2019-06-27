@@ -81,34 +81,36 @@ RUN echo 'Etc/UTC' > /etc/timezone && \
     apt-get update && apt-get install -q -y tzdata && rm -rf /var/lib/apt/lists/*
 
 # install packages
-RUN apt-get update && apt-get install -q -y \
+RUN sudo apt-get update && sudo apt-get install -q -y \
     dirmngr \
     gnupg2 \
     lsb-release \
-    && rm -rf /var/lib/apt/lists/*
+    && sudo rm -rf /var/lib/apt/lists/*
 
 # setup keys
-RUN apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys C1CF6E31E6BADE8868B172B4F42ED6FBAB17C654
+RUN sudo apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys C1CF6E31E6BADE8868B172B4F42ED6FBAB17C654
 
 # setup sources.list
-RUN echo "deb http://packages.ros.org/ros/ubuntu `lsb_release -sc` main" > /etc/apt/sources.list.d/ros-latest.list
+RUN echo "deb http://packages.ros.org/ros/ubuntu `lsb_release -sc` main" | sudo tee /etc/apt/sources.list.d/ros-latest.list > /dev/null
+
+RUN echo 'debconf debconf/frontend select Noninteractive' | sudo debconf-set-selections
 
 # install bootstrap tools
-RUN apt-get update && apt-get install --no-install-recommends -y \
+RUN sudo apt-get update && sudo apt-get install --no-install-recommends -y \
     python-rosdep \
     python-rosinstall \
     python-vcstools \
     ros-melodic-ros-core=1.4.1-0* \
     ros-melodic-ros-base=1.4.1-0* \
     ros-melodic-perception=1.4.1-0* \
-    && rm -rf /var/lib/apt/lists/*
+    && sudo rm -rf /var/lib/apt/lists/*
 
 # setup environment
 ENV LANG C.UTF-8
 ENV LC_ALL C.UTF-8
 
 # bootstrap rosdep
-RUN rosdep init \
+RUN sudo rosdep init \
     && rosdep update
 
 ENV ROS_DISTRO melodic
