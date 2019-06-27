@@ -116,3 +116,11 @@ RUN sudo rosdep init \
 ENV ROS_DISTRO melodic
 
 RUN echo "source /opt/ros/melodic/setup.bash" >> ~/.bashrc
+
+ENV LMBSPECIALOPS_LIB="/home/netdef/lmbspecialops/build/lib/lmbspecialops.so"
+ENV PYTHONPATH="/usr/local/lib/python3.6/dist-packages:/home/netdef/lmbspecialops/python:/home/netdef"
+ENV CUDA_VISIBLE_DEVICES="${GPU_IDX}"
+ENV PATH="/home/netdef/netdef_slim/tools:$PATH"
+
+RUN sudo apt-get update && sudo apt-get install python3-yaml python3-catkin-pkg-modules python3-rospkg-modules -y \
+  && sudo rm -rf /var/lib/apt/lists/*
