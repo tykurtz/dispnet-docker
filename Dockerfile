@@ -117,7 +117,7 @@ ENV ROS_DISTRO melodic
 
 ENV LMBSPECIALOPS_LIB="/home/netdef/lmbspecialops/build/lib/lmbspecialops.so"
 ENV PYTHONPATH="/usr/local/lib/python3.6/dist-packages:/home/netdef/lmbspecialops/python:/home/netdef"
-ENV CUDA_VISIBLE_DEVICES="${GPU_IDX}"
+ENV CUDA_VISIBLE_DEVICES=0
 ENV PATH="/home/netdef/netdef_slim/tools:$PATH"
 
 RUN sudo apt-get update && sudo apt-get install python3-yaml python3-catkin-pkg-modules python3-rospkg-modules python-catkin-tools -y \
@@ -144,5 +144,9 @@ RUN mkdir /home/netdef/catkin_workspace && \
   echo "source /opt/ros/melodic/setup.bash" >> /home/netdef/.bashrc && \
   echo "source /home/netdef/catkin_workspace/install/setup.bash" >> /home/netdef/.bashrc
 
+COPY disp-wrapper-ros/ /home/netdef/catkin_workspace/src/disp-wrapper-ros
+RUN  cd /home/netdef/catkin_workspace && \
+     . /opt/ros/melodic/setup.sh && \
+     catkin build
 
 COPY src/dispnet-wrapper/dispnet_wrapper.py /home/netdef
