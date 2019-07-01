@@ -148,5 +148,3 @@ COPY disp-wrapper-ros/ /home/netdef/catkin_workspace/src/disp-wrapper-ros
 RUN  cd /home/netdef/catkin_workspace && \
      . /opt/ros/melodic/setup.sh && \
      catkin build
-
-COPY src/dispnet-wrapper/dispnet_wrapper.py /home/netdef
