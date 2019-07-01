@@ -6,6 +6,7 @@ import time
 import netdef_slim as nd
 import message_filters
 from sensor_msgs.msg import Image
+from stereo_msgs.msg import DisparityImage
 from cv_bridge import CvBridge, CvBridgeError
 
 
@@ -16,20 +17,21 @@ class DispnetWrapper:
         self.bridge = CvBridge()
 
         self.images_queue = []
-        self.disparity_publisher = rospy.Publisher('/nn_disp_out', Image)
+        self.disparity_image_publisher = rospy.Publisher('/nn/debug', Image)
+        self.disparity_publisher = rospy.Publisher('/nn/depth', DisparityImage)
 
     def on_images_received(self, left_image, right_image):
+        if len(self.images_queue) < 1:
+            self.images_queue.append((left_image, right_image))
+
+    def analyze_images(self):
+        left_image, right_image = self.images_queue.pop()
+
         # Convert from sensor_msgs/Image to numpy
         # uint8 rgb
         # 480, 640, 3
         left_cv_image = self.bridge.imgmsg_to_cv2(left_image, "bgr8")
         right_cv_image = self.bridge.imgmsg_to_cv2(right_image, "bgr8")
-
-        if len(self.images_queue) < 1:
-            self.images_queue.append((left_cv_image, right_cv_image))
-
-    def analyze_images(self):
-        left_cv_image, right_cv_image = self.images_queue.pop()
 
         start = time.time()
         net_output = self.disp_net.eval(left_cv_image.transpose(2, 0, 1)[np.newaxis, :, :, :],
@@ -47,7 +49,19 @@ class DispnetWrapper:
         disparity_image = disparity_image / disparity_image.max()
 
         image_message = self.bridge.cv2_to_imgmsg(disparity_image)
-        self.disparity_publisher.publish(image_message)
+        self.disparity_image_publisher.publish(image_message)
+
+        disparity_message = DisparityImage()
+        disparity_message.image = image_message
+        disparity_message.T = 20  # TODO Get real baseline or parse from extrinsics
+        disparity_message.header = left_image.header
+        disparity_message.f = 12  # TODO Replace with real focal length
+
+        disparity_message.min_disparity = -300
+        disparity_message.max_disparity = 600
+        disparity_message.delta_d = .01
+
+        self.disparity_publisher.publish(disparity_message)
 
 
 if __name__ == '__main__':
