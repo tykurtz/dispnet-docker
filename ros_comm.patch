@@ -1,0 +1,10 @@
+--- /opt/ros/melodic/lib/python2.7/dist-packages/message_filters/__init__.py	2018-08-06 10:38:23.000000000 -0700
++++ modified_init.py	2019-06-28 09:30:44.466674213 -0700
+@@ -33,6 +33,7 @@
+ import itertools
+ import threading
+ import rospy
++from functools import reduce
+ 
+ 
+ class SimpleFilter(object):
