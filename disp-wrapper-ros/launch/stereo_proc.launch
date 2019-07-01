@@ -2,13 +2,13 @@
 <!-- Launch in the camera namespace containing "image_raw" and "camera_info" -->
 <launch>
   <arg name="respawn" default="false" />
-  <arg name="approximate_sync" default="false" />
+  <arg name="approximate_sync" default="true" />
 
   <arg     if="$(arg respawn)" name="bond" value="" />
   <arg unless="$(arg respawn)" name="bond" value="--no-bond" />
 
   <!-- Start the dispnet wrapper -->
-  <node pkg="disp-wrapper-ros" name="dispnet" type="dispnet_wrapper.py" output="screen"/>
+  <node pkg="disp-wrapper-ros" name="dispnet" type="dispnet_wrapper.py"/> 
 
   <!-- Start a nodelet manager; the name must be unqualified here -->
   <node pkg="nodelet" type="nodelet" name="pointcloud" args="manager" />
@@ -16,8 +16,13 @@
   <!-- PointCloud2 -->
   <node pkg="nodelet" type="nodelet" name="point_cloud2"
         args="load stereo_image_proc/point_cloud2 pointcloud $(arg bond)"
-	respawn="$(arg respawn)" >
+	respawn="$(arg respawn)" output="screen">
     <!-- TODO Add remappings -->
+    <remap from="disparity" to="/nn/depth"/>
+    <remap from="left/image_rect_color" to="/camera/infra1/image_rect_raw"/>
+    <remap from="left/camera_info" to="/camera/infra1/camera_info"/>
+    <remap from="right/camera_info" to="/camera/infra2/camera_info"/>
     <param name="approximate_sync" value="$(arg approximate_sync)" />
+    <param name="queue_size" value="5000"/>
   </node>
 </launch>
