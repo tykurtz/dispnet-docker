@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no" ?>
+<!-- Launch in the camera namespace containing "image_raw" and "camera_info" -->
+<launch>
+  <arg name="respawn" default="false" />
+  <arg name="approximate_sync" default="false" />
+
+  <arg     if="$(arg respawn)" name="bond" value="" />
+  <arg unless="$(arg respawn)" name="bond" value="--no-bond" />
+
+  <!-- Start the dispnet wrapper -->
+
+  <!-- Start a nodelet manager; the name must be unqualified here -->
+  <node pkg="nodelet" type="nodelet" name="pointcloud" args="manager" />
+
+  <!-- PointCloud2 -->
+  <node pkg="nodelet" type="nodelet" name="point_cloud2"
+        args="load stereo_image_proc/point_cloud2 pointcloud $(arg bond)"
+	respawn="$(arg respawn)" >
+    <param name="approximate_sync" value="$(arg approximate_sync)" />
+  </node>
+</launch>
