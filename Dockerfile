@@ -115,14 +115,34 @@ RUN sudo rosdep init \
 
 ENV ROS_DISTRO melodic
 
-RUN echo "source /opt/ros/melodic/setup.bash" >> ~/.bashrc
-
 ENV LMBSPECIALOPS_LIB="/home/netdef/lmbspecialops/build/lib/lmbspecialops.so"
 ENV PYTHONPATH="/usr/local/lib/python3.6/dist-packages:/home/netdef/lmbspecialops/python:/home/netdef"
 ENV CUDA_VISIBLE_DEVICES="${GPU_IDX}"
 ENV PATH="/home/netdef/netdef_slim/tools:$PATH"
 
-RUN sudo apt-get update && sudo apt-get install python3-yaml python3-catkin-pkg-modules python3-rospkg-modules -y \
+RUN sudo apt-get update && sudo apt-get install python3-yaml python3-catkin-pkg-modules python3-rospkg-modules python-catkin-tools -y \
   && sudo rm -rf /var/lib/apt/lists/*
+
+COPY ros_comm.patch /home/netdef
+RUN sudo patch /opt/ros/melodic/lib/python2.7/dist-packages/message_filters/__init__.py /home/netdef/ros_comm.patch
+RUN sudo pip3 install opencv-python
+COPY results/left.png /home/netdef/left.png
+COPY results/right.png /home/netdef/right.png
+
+# Source build cv_bridge
+RUN mkdir /home/netdef/catkin_workspace && \
+    cd /home/netdef/catkin_workspace && \
+    catkin init && \
+    catkin config -DPYTHON_EXECUTABLE=/usr/bin/python3 -DPYTHON_INCLUDE_DIR=/usr/include/python3.6m -DPYTHON_LIBRARY=/usr/lib/x86_64-linux-gnu/libpython3.6m.so && \
+  catkin config --install && \
+  git clone https://github.com/ros-perception/vision_opencv.git src/vision_opencv && \
+  cd src/vision_opencv && \
+  git checkout 1.13.0 && \
+  cd ../.. && \
+  . /opt/ros/melodic/setup.sh && \
+  catkin build cv_bridge && \
+  echo "source /opt/ros/melodic/setup.bash" >> /home/netdef/.bashrc && \
+  echo "source /home/netdef/catkin_workspace/install/setup.bash" >> /home/netdef/.bashrc
+
 
 COPY src/dispnet-wrapper/dispnet_wrapper.py /home/netdef
