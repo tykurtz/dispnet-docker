@@ -17,6 +17,7 @@
   <node pkg="nodelet" type="nodelet" name="point_cloud2"
         args="load stereo_image_proc/point_cloud2 pointcloud $(arg bond)"
 	respawn="$(arg respawn)" >
+    <!-- TODO Add remappings -->
     <param name="approximate_sync" value="$(arg approximate_sync)" />
   </node>
 </launch>
