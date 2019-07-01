@@ -140,7 +140,7 @@ fun__debug_printf "Second input:    ${SECOND_INPUT}";
 fun__debug_printf "Output:          ${OUTPUT}";
 
 export ;
-export 
+export
 
 #source ~/netdef_slim/bashrc;
 
@@ -156,10 +156,6 @@ if test $VERBOSITY -ge 2; then
     --volume "${PWD}:/input:ro"  \
     --volume "${PWD}:/output:rw" \
     --workdir "${WORKDIR}"       \
-    --env LMBSPECIALOPS_LIB="/home/netdef/lmbspecialops/build/lib/lmbspecialops.so" \
-    --env PYTHONPATH="/usr/local/lib/python3.6/dist-packages:/home/netdef/lmbspecialops/python:/home/netdef" \
-    --env CUDA_VISIBLE_DEVICES="${GPU_IDX}" \
-    --env PATH="/home/netdef/netdef_slim/tools:$PATH" \
     -it "$CONTAINER" python3 controller.py eval /input/"${FIRST_INPUT}" /input/"${SECOND_INPUT}" /output/"${OUTPUT}"
 else
   docker run                     \
@@ -168,10 +164,6 @@ else
     --volume "${PWD}:/input:ro"  \
     --volume "${PWD}:/output:rw" \
     --workdir "${WORKDIR}"       \
-    --env LMBSPECIALOPS_LIB="/home/netdef/lmbspecialops/build/lib/lmbspecialops.so" \
-    --env PYTHONPATH="/usr/local/lib/python3.6/dist-packages:/home/netdef/lmbspecialops/python:/home/netdef" \
-    --env CUDA_VISIBLE_DEVICES="${GPU_IDX}" \
-    --env PATH="/home/netdef/netdef_slim/tools:$PATH" \
     -it "$CONTAINER" python3 controller.py eval /input/"${FIRST_INPUT}" /input/"${SECOND_INPUT}" /output/"${OUTPUT}" \
     > /dev/null;
 fi
