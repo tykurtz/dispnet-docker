@@ -21,7 +21,7 @@
     <remap from="disparity" to="/nn/depth"/>
     <remap from="left/image_rect_color" to="/camera/infra1/image_rect_raw"/>
     <remap from="left/camera_info" to="/camera/infra1/camera_info"/>
-    <remap from="right/camera_info" to="/camera/infra2/camera_info"/>
+    <remap from="right/camera_info" to="/camera/infra2/modified_camera_info"/>
     <param name="approximate_sync" value="$(arg approximate_sync)" />
     <param name="queue_size" value="5000"/>
   </node>

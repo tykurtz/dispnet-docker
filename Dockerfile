@@ -133,7 +133,8 @@ COPY results/right.png /home/netdef/right.png
 RUN mkdir /home/netdef/catkin_workspace && \
     cd /home/netdef/catkin_workspace && \
     catkin init && \
-    catkin config -DPYTHON_EXECUTABLE=/usr/bin/python3 -DPYTHON_INCLUDE_DIR=/usr/include/python3.6m -DPYTHON_LIBRARY=/usr/lib/x86_64-linux-gnu/libpython3.6m.so && \
+  catkin config -DPYTHON_EXECUTABLE=/usr/bin/python3 -DPYTHON_INCLUDE_DIR=/usr/include/python3.6m -DPYTHON_LIBRARY=/usr/lib/x86_64-linux-gnu/libpython3.6m.so && \
+  # catkin config -DPYTHON_EXECUTABLE=/usr/bin/python3 -DPYTHON_INCLUDE_DIR=/usr/include/python3.6m -DPYTHON_LIBRARY=/usr/lib/x86_64-linux-gnu/libpython3.6m.so --cmake-args -DCMAKE_BUILD_TYPE=Release && \
   catkin config --install && \
   git clone https://github.com/ros-perception/vision_opencv.git src/vision_opencv && \
   cd src/vision_opencv && \

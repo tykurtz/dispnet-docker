@@ -5,7 +5,7 @@ import rospy
 import time
 import netdef_slim as nd
 import message_filters
-from sensor_msgs.msg import Image
+from sensor_msgs.msg import CameraInfo, Image
 from stereo_msgs.msg import DisparityImage
 from cv_bridge import CvBridge, CvBridgeError
 
@@ -19,10 +19,21 @@ class DispnetWrapper:
         self.images_queue = []
         self.disparity_image_publisher = rospy.Publisher('/nn/debug', Image)
         self.disparity_publisher = rospy.Publisher('/nn/depth', DisparityImage)
+        self.right_camera_info_subscriber = rospy.Subscriber('/camera/infra2/camera_info', CameraInfo, self.on_camera_info_received)
+        self.right_camera_info_publisher = rospy.Publisher('/camera/infra2/modified_camera_info', CameraInfo)
 
     def on_images_received(self, left_image, right_image):
         if len(self.images_queue) < 1:
             self.images_queue.append((left_image, right_image))
+
+    def on_camera_info_received(self, camera_info):
+        modified_camera_info = camera_info
+        modified_camera_info.header.frame_id = 'camera_infra1_optical_frame'
+        projection_matrix = list(modified_camera_info.P)
+        projection_matrix[3] = .0499728  # As we're switching frames, modify the baseline as well
+        modified_camera_info.P = projection_matrix
+
+        self.right_camera_info_publisher.publish(modified_camera_info)
 
     def analyze_images(self):
         left_image, right_image = self.images_queue.pop()
