@@ -51,26 +51,29 @@ class DispnetWrapper:
         print('Analysis time : ', time.time() - start)
 
         disparity_image = net_output['disp.L']
-        # Disparity image shape = (1, 1, 480, 640)
         print('Max and min : ', disparity_image.max(), disparity_image.min())
 
-        # Rescale for image view
+        # Disparity image shape = (1, 1, 480, 640)
         disparity_image = disparity_image[0, 0, :, :]
-        disparity_image = disparity_image + disparity_image.min()
-        disparity_image = disparity_image / disparity_image.max()
+
+        # Rescale for image view
+        debug_disparity_image = disparity_image + disparity_image.min()
+        debug_disparity_image = debug_disparity_image / debug_disparity_image.max()
+
+        debug_image_message = self.bridge.cv2_to_imgmsg(debug_disparity_image)
+        self.disparity_image_publisher.publish(debug_image_message)
 
         image_message = self.bridge.cv2_to_imgmsg(disparity_image)
-        self.disparity_image_publisher.publish(image_message)
 
         disparity_message = DisparityImage()
         disparity_message.image = image_message
-        disparity_message.T = 20  # TODO Get real baseline or parse from extrinsics
         disparity_message.header = left_image.header
-        disparity_message.f = 12  # TODO Replace with real focal length
+        disparity_message.T = .0499728  # meters
+        disparity_message.f = 382.9233093261719  # pixels
 
         disparity_message.min_disparity = -300
         disparity_message.max_disparity = 600
-        disparity_message.delta_d = .01
+        disparity_message.delta_d = .001
 
         self.disparity_publisher.publish(disparity_message)
 
