@@ -43,7 +43,7 @@ WORKDIR ${HOME}
 
 RUN sudo curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py   && \
     sudo python3 get-pip.py                                        && \
-    wget https://lmb.informatik.uni-freiburg.de/resources/binaries/tensorflow-binaries/tensorflow-1.11.0-cp36-cp36m-linux_x86_64.whl && \
+    wget https://lmb.informatik.uni-freiburg.de/resources/binaries/tensorflow-binaries/tensorflow-1.11.0-cp36-cp36m-linux_x86_64.whl --no-check-certificate && \
     sudo -H pip3 install ${HOME}/tensorflow-1.11.0-cp36-cp36m-linux_x86_64.whl && \
     sudo -H pip3 install scikit-learn pillow scipy==1.2.0 
 
@@ -60,13 +60,13 @@ RUN git clone https://github.com/lmb-freiburg/lmbspecialops && \
     make -j                                                 && \
     sudo rm /usr/local/cuda/lib64/stubs/libcuda.so.1
 
-RUN git clone https://github.com/lmb-freiburg/netdef_slim   && \
+RUN git clone https://github.com/tykurtz/netdef_slim   && \
     cd netdef_slim                                          && \
-    git checkout 54f101d0f6a0bb1b815b808754176e2732e8de77   && \
+  git checkout 7b855db3e17e2a986aa6af33427de0037a8e083e && \
     cd ..                                                   && \
     git clone https://github.com/lmb-freiburg/netdef_models && \
     cd netdef_models                                        && \
-    git checkout 204add373a1a8070e082112a990cb553123b79af   && \
+    git checkout 7d3311579cf712b31d05ec29f3dc63df067aa07b   && \
     cd DispNet3  && bash download_snapshots.sh && cd ..  #   && \
     # cd FlowNet3  && bash download_snapshots.sh && cd ..     && \
     # cd FlowNetH  && bash download_snapshots.sh && cd ..
@@ -126,8 +126,6 @@ RUN sudo apt-get update && sudo apt-get install python3-yaml python3-catkin-pkg-
 COPY ros_comm.patch /home/netdef
 RUN sudo patch /opt/ros/melodic/lib/python2.7/dist-packages/message_filters/__init__.py /home/netdef/ros_comm.patch
 RUN sudo pip3 install opencv-python
-COPY results/left.png /home/netdef/left.png
-COPY results/right.png /home/netdef/right.png
 
 # Source build cv_bridge
 RUN mkdir /home/netdef/catkin_workspace && \
@@ -149,3 +147,9 @@ COPY disp-wrapper-ros/ /home/netdef/catkin_workspace/src/disp-wrapper-ros
 RUN  cd /home/netdef/catkin_workspace && \
      . /opt/ros/melodic/setup.sh && \
      catkin build
+
+RUN sudo apt update && sudo apt install -y emacs tmux git && \
+  git clone -b develop https://github.com/syl20bnr/spacemacs ~/.emacs.d && \
+  wget -O ~/.spacemacs https://gist.githubusercontent.com/tykurtz/41c6d7b0930b9f8b107265ab895114a4/raw/b5f5fb35f1defc081a1ce2c8ec8a1c2fbaca6c80/.spacemacs
+# COPY results/left.png /home/netdef/left.png
+# COPY results/right.png /home/netdef/right.png

@@ -8,7 +8,7 @@
   <arg unless="$(arg respawn)" name="bond" value="--no-bond" />
 
   <!-- Start the dispnet wrapper -->
-  <node pkg="disp-wrapper-ros" name="dispnet" type="dispnet_wrapper.py"/> 
+  <node pkg="disp-wrapper-ros" name="dispnet" type="dispnet_wrapper.py" output="screen"/> 
 
   <!-- Start a nodelet manager; the name must be unqualified here -->
   <node pkg="nodelet" type="nodelet" name="pointcloud" args="manager" />
@@ -23,6 +23,6 @@
     <remap from="left/camera_info" to="/camera/infra1/camera_info"/>
     <remap from="right/camera_info" to="/camera/infra2/modified_camera_info"/>
     <param name="approximate_sync" value="$(arg approximate_sync)" />
-    <param name="queue_size" value="5000"/>
+    <param name="queue_size" value="10"/>
   </node>
 </launch>
