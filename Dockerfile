@@ -143,13 +143,16 @@ RUN mkdir /home/netdef/catkin_workspace && \
   echo "source /opt/ros/melodic/setup.bash" >> /home/netdef/.bashrc && \
   echo "source /home/netdef/catkin_workspace/install/setup.bash" >> /home/netdef/.bashrc
 
+RUN sudo apt update && sudo apt install -y emacs tmux git && \
+  git clone -b develop https://github.com/syl20bnr/spacemacs ~/.emacs.d && \
+  wget -O ~/.spacemacs https://gist.githubusercontent.com/tykurtz/41c6d7b0930b9f8b107265ab895114a4/raw/b5f5fb35f1defc081a1ce2c8ec8a1c2fbaca6c80/.spacemacs && \
+  emacs --batch -l ~/.emacs.d/init.el --eval="(configuration-layer/update-packages t)"
+
 COPY disp-wrapper-ros/ /home/netdef/catkin_workspace/src/disp-wrapper-ros
 RUN  cd /home/netdef/catkin_workspace && \
      . /opt/ros/melodic/setup.sh && \
      catkin build
 
-RUN sudo apt update && sudo apt install -y emacs tmux git && \
-  git clone -b develop https://github.com/syl20bnr/spacemacs ~/.emacs.d && \
-  wget -O ~/.spacemacs https://gist.githubusercontent.com/tykurtz/41c6d7b0930b9f8b107265ab895114a4/raw/b5f5fb35f1defc081a1ce2c8ec8a1c2fbaca6c80/.spacemacs
+
 # COPY results/left.png /home/netdef/left.png
 # COPY results/right.png /home/netdef/right.png
