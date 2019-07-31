@@ -30,7 +30,7 @@ class DispnetWrapper:
         modified_camera_info = camera_info
         modified_camera_info.header.frame_id = 'camera_infra1_optical_frame'
         projection_matrix = list(modified_camera_info.P)
-        projection_matrix[3] = .0499728  # As we're switching frames, modify the baseline as well
+        projection_matrix[3] = -projection_matrix[0] * .0499728  # As we're switching frames, modify the baseline as well
         modified_camera_info.P = projection_matrix
 
         self.right_camera_info_publisher.publish(modified_camera_info)
@@ -57,8 +57,8 @@ class DispnetWrapper:
         disparity_image = disparity_image[0, 0, :, :]
 
         # Rescale for image view
-        debug_disparity_image = disparity_image + disparity_image.min()
-        debug_disparity_image = debug_disparity_image / debug_disparity_image.max()
+        debug_disparity_image = disparity_image + -75  # disparity_image.min()
+        debug_disparity_image = debug_disparity_image / 80  # debug_disparity_image.max()
 
         debug_image_message = self.bridge.cv2_to_imgmsg(debug_disparity_image)
         self.disparity_image_publisher.publish(debug_image_message)
